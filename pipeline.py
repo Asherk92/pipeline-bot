@@ -4,6 +4,7 @@ Pipeline Bot - Manage your sales pipeline with natural language.
 
 import os
 import json
+import base64
 from dotenv import load_dotenv
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
@@ -39,9 +40,10 @@ STAGES = ['Lead', 'Discovery', 'Build POC', 'Proposal', 'Negotiation', 'Won', 'L
 def get_sheets_service():
     """Connect to Google Sheets."""
     # Try environment variable first (for deployment), then file (for local)
-    token_json = os.environ.get('GOOGLE_TOKEN_JSON')
+    token_b64 = os.environ.get('GOOGLE_TOKEN_B64')
 
-    if token_json:
+    if token_b64:
+        token_json = base64.b64decode(token_b64).decode('utf-8')
         creds_data = json.loads(token_json)
     else:
         token_file = os.path.join(os.path.dirname(__file__), 'token.json')
